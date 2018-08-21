@@ -1,0 +1,236 @@
+﻿%\RequirePackage{fixltx2e} %This package in CTeX is not compatible with revtex4-1
+\documentclass[aps,pre,12pt,preprint,onecolumn,showpacs,showkeys]{revtex4-1}
+\usepackage{ctex}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{setspace,dcolumn}
+\usepackage{hyperref}
+\usepackage{graphicx,psfrag,epsfig}
+\usepackage[font=small,format=plain,labelfont=bf,textfont=it,justification=centering,singlelinecheck=false]{caption}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bm,upgreek}
+\usepackage{geometry}
+\usepackage[mathscr]{eucal}
+\usepackage{caption}
+\usepackage{subcaption}
+\hypersetup{%
+  colorlinks = true,
+  linkcolor  = black
+} 
+\geometry{top=1.58cm,bottom=1.64cm,left=2.0cm,right=2.0cm}
+%\geometry{top=2.04cm,bottom=2.04cm,left=2.0cm,right=2.0cm}
+%\renewcommand\appendixname{Appendix}
+\renewcommand\abstractname{\textbf{Abstract}}%Abstract
+%\renewcommand\tablename{表}
+%\renewcommand\figurename{图}
+\makeatletter
+
+\def\@keys@name{\bf Keywords: } 
+
+\makeatother
+\linespread{0.8}
+%\renewcommand{\captionfont}{\linespread{0.5}\normalsize}
+\renewcommand{\labelenumi}{\alph{enumi}.}
+\leftmargini=20mm
+\def \d {\mathrm d}
+\def \degree {^\circ}
+\def \A {\bm{A}}
+\def \H {\bm{H}}
+\def \AZ {\bm{AZ}}
+\def \HZ {\bm{HZ}}
+\def \degC {^\circ \mathrm{C}}
+
+\begin{document}
+\title{\bf Stock Price Analysis Using Univariate and Multivariate Models\vspace{15mm}}
+\author{Wenhao Leng\vspace{2mm}}
+\affiliation{Student ID: 1400015475\vspace{2mm}}
+\author{Xiaoyu Zhang\vspace{2mm}}
+\affiliation{Student ID: 1500015902\vspace{2mm}}
+\author{Zhixuan Shao\vspace{2mm}}
+\affiliation{Student ID: 1400012141\vspace{2mm}}
+\affiliation{ \vspace{2mm}}
+%\date{\today}
+%\pacs{02.10.Yn, 33.15.Vb, 98.52.Cf, 78.47.dc}
+\keywords{ARMA, GARCH, VAR, Granger-Causality, Variance Decomposition, Impulse Response, Forecasting Performance}
+%\email{shaozhixuansh@pku.edu.cn; (86)13381350619}
+
+\begin{abstract}
+    \vspace{5mm}
+    \begin{spacing}{1.5}
+    
+    % Our study is driven by the history price of four stocks, Shanghai Stock Index, Hangseng Stock Index and the price of MERCHANTS BANK in SHA and HK. Our primary aim is to forecast future stock price based on history. First we use a univariate model (ARMA) and then take into account the heterogeneous variance by an ARMA-GARCH model. However the forecasting performance of a univariate model is far from satisfactory. Then we try to explore if there is any association (e.g. Granger causality) between the index and individual stocks that will turn out to help make better forecast. Nevertheless, our final conclusion is that the stock price is highly stochastic, and thus far from predictable with all these limited information.
+    This project aims at discovering the relationship between the stock prices and returns of one company (MERCHANTS BANK) cross-listed both in Shanghai and Hong Kong. First we considered two univariate models, the ARMA model and the ARMA-GARCH model, which turned out to perform poorly at forecasting. Then we moved on to VAR model, and saw great improvement, especially in H-share price. Through granger causality test, impulse response and variance decomposition analysis, we concluded that A-share price had remarkable influence in explaining H-share price while a large part of A-share price was implied by SSI. Out of our expectation no significant cointegration relationship on the price level was found for this particular stock. In a nutshell, VAR performs better than univariate models as it makes use of more information available. Still, the stock price is highly stochastic and far from predictable.
+\end{spacing}
+\end{abstract}
+
+\maketitle
+
+\begin{spacing}{1.5}
+    \tableofcontents
+\end{spacing}
+\newpage
+
+
+\section{Introduction}
+In order to achieve its exchange rate target, Chinese government still holds on to the constraints of free capital flow. As a result, mainland and Hong Kong stock markets are segmented, which means that investors cannot convert the shares of the same company listed in Shanghai to its counterpart in Hong Kong. And it has been a common phenomenon that the stock price at mainland enjoys a premium over Hong Kong for most cross-listed companies, even if they actually share the same right. Therefore, this project is entailed to figure out whether there is some implicit relationship between the two different share prices and their returns.
+
+\section{Reviews of related studies}
+There have been tremendous research over the relationship between A and H share and they mainly cover two major aspects: price difference and cointegration.
+
+Xu (2009) 
+\footnote{徐寿福.“双重上市”公司A、H股价格差异的因素研究.证券市场导报,2009,02;54-60}
+tested the factors that result in the price difference between A and H-share of Chinese dual-listed companies based on dynamic panel data models. The empirical results suggest that Differential Demand Hypothesis, the Liquidity Hypothesis and “Through Train” had a great effect on the price difference.
+
+Some scholars also analyzed the cointegrating relation of A and H-share. Yao (2007) 
+\footnote{姚宁.交叉上市和价格发现:中国A股和H股的实证研究.内蒙古农业大学学报:社会科学版,2007,01；63-65}
+implemented empirical research on the contribution effect of A and H-share market on the price of Chinese dual-listed companies. The result suggests that some stocks’ closing prices have cointegrating relation. Liu and Chen (2013) 
+\footnote{刘燕,陈勇,周哲英. A 股、H 股市场协整关系和引导关系实证研究.金融理论与实践,2013,06;35-38}
+found that SSI and HIS have long-term stable cointegrating relation. Then they found unidirectional causality between these two markets that the performance of the A-share market significantly guides that of the H-share market based on Granger causality test. They also testify this result using variance decomposition. Yan and Cui (2012) 
+\footnote{严宏伟,崔继刚.同时开市背景下AH股的股价联动性分析.中国外资,2012,10;228-230}
+works out price indexes based on the selected 57 A and H shares, and separates these indexes into two phases by the point of the date, March 7, 2011, the day when same time opening started. Based on impulse response and variance decomposition analysis, they found that after the same time opening, the relationship of linkage between the A shares and H shares has been improved. The effect of the H shares price to the A shares price appears more obviously.
+
+
+\section{Data Description and Preprocessing}
+The original data consist of four time series:
+\begin{enumerate}
+    \item \textbf{A}: Shanghai Stock Index SCI: 000001
+    \item \textbf{H}: Hangseng Stock Index HSI
+    \item \textbf{AZ}: MERCHANTS BANK SHA: 600036
+    \item \textbf{HZ}: MERCHANTS BANK HK: 03968
+\end{enumerate}
+
+Each seires is the \textbf{daily Open Price} of that stock, from 2007/5/30 to 2018/5/29. Note that some dates of \textbf{A} and \textbf{H} are different due to different holiday schedules. We deal with this problem by keeping only common dates shared by \textbf{A} and \textbf{H}. Finally we have 4 time series with the same length 2595.
+
+    \subsection{Dividing Training Set and Test Set}
+
+    In order to fairly judge the forecasting performance of a model, we split the data into training set and test set at the very beginning. We leave the last 100 days' observations (from 2017/12/20 to 2018/5/29) as the test set. 
+
+    Such a division is based on the assumption that the structure of our models did not change greatly after 2018.
+
+    \subsection{Transformation and Stationary Test}
+
+At first glance all 4 seires are not stationary. We transformed each series by
+\begin{equation}
+    \bm{X} \to 100 \times \Delta \log \bm{X}
+\end{equation}
+The differenced log price series is known as the \textbf{log return}, approximately the ratio of change to current price. Unsurprisingly, as is the common case for return series, all these "difflog" series now appear stationary. We furthur conduct the \textbf{ADF test} to verify it. All 4 ADF tests turn out to be significant (test statistic far beyond the critical values) so we reject the null hypothesis -- unit-root process. 
+
+\section{Univariate Models}
+We focus on \textbf{HZ} to illustrate the use of univariate models. Studies of other series are basically the same.
+    \subsection{ARMA}
+        \subsubsection{Order Selection: ACF, PACF and EACF}
+        ACF and PACF of \textbf{HZ.difflog} are given in Appendix. For lags lower than 20, only the 1$^{st}$ lag ACF and PACF are significant. This is a property of MA(1) process. EACF method also indicates a MA(1) model.
+
+        \subsubsection{Model Fitting -- MA(1)}
+        The `auto.arima()' function in R automatically selects the ARIMA model with the lowest AIC. Here it selects the MA(1) model (with zero mean), the same choice as given by EACF.
+
+        The only coefficient of the MA(1) model is significant, 
+        \begin{equation}
+            \hat \theta _1 = -0.0916,\quad \mathrm{se}(\hat \theta_1)= 0.0205
+        \end{equation}
+        and the fitted MA(1) model is: $\hat {\HZ_t} = e_t + \hat \theta _1 e_{t-1}$
+
+        \subsubsection{Forecasting Performance}
+        We try both rolling-window forecast and forecast with fixed model parameters. The results turn out to be almost the same (since the test set is considerably shorter than the training set so refitting does not change the parameters much.) We forecast on day $T+1$ using information earlier than day $T$, i.e. we always make \textbf{1-step ahead forecast}.
+
+        We forecast on the test set (100 days). By comparing with the actual value, we compute the RMSE and out-of-sample $R^2$:
+        \begin{equation}
+            \mathrm{MSE}= \frac{1}{T}\sum _{i=1}^T (y-\hat y)^2, \quad \mathrm{RMSE}= \sqrt{\mathrm{MSE}}, \quad R^2= 1- \frac{\sum _{i=1}^T (y- \hat y)^2}{\sum _{i=1}^T (y- \bar y)^2}
+        \end{equation}
+        
+        Here $\bm y$ is the series HZ.difflog within the test set, with standard deviation 2.444087.
+        
+        The result of MA(1) is very poor:
+        \begin{equation}
+            \mathrm{RMSE}=2.432285,\quad R^2=-0.037\%
+        \end{equation}
+        suggesting the MA(1) model useless in forecasting.
+
+        \subsubsection{Model Diagnosis}
+            We reexamine the model by checking the residuals using ACF, PACF and \textbf{Ljung Box Test}. No significant serial correlation is shown, i.e. the residual sequence appears to be white noise.
+
+            However, there is strong evidence suggesting that it is \textbf{not independent white noise}. The most obvious \textbf{stylized feature} is \textbf{volatility clustering}, which cannot be captured with linear models.
+
+            We notice that the residual sequence presents an unusually high volatility around 2008-2009, which can be explained by the financial crisis during that period. There are also some other clusters of high volatility. Since traditional ARMA model assumes constant conditional variance, we instead consider an ARCH (or GARCH) model as following.
+
+    \subsection{Variance Model: ARMA-GARCH}
+        \subsubsection{ARCH Effect: significant}
+            Before setting up a model, we want to make sure whether there is indeed a significant ARCH effect (autoregressive conditional heteroscedasticity).
+            
+            First, we run the ACF, PACF and Ljung-Box Test of the \textbf{squared residual Sequence}, and they all suggest strong serial correlation. 
+            
+            Second, we use the \textbf{ARCH-LM (Lagrange Multiplier) test} with lag=3, 6, 12. These tests have significantly small p-value, so we reject $H_0$: no ARCH effect.
+        
+        \subsubsection{Model Specifying and Fitting}
+        Although the ACF, PACF and AIC may prefer a high-order model like ARCH(8), in practice we do not favor such a complicated model. Instead, a conventional GARCH(1,1) variance model may suffice, which means the volatility $h_t$ satisfies:
+        \begin{equation}
+            h_t = \omega + \alpha _1 Z_{t-1}^2 +\beta _1 h_{t-1}, \quad Z_t=\sqrt{h_t} e_t,\, e_t \sim \mathrm{IID}\, \mathrm{N}(0,1)  
+        \end{equation}
+
+        For the mean model we still use MA(1), which is also suggested by AIC. Then we estimate the parameters in the MA(1)-GARCH(1,1) model: 
+        \begin{align}
+            &\textrm{Mean Model: } \hat \mu=0.0465, \quad \hat \theta _1 =-0.0617 (**) \\
+            &\textrm{Variance Model: } \hat \omega =0.0460 (*), \quad \hat \alpha _1=0.0575(***),\quad \hat \beta _1=0.9388(***)
+        \end{align}
+        \subsubsection{Model Diagnosis}
+            Under MA(1)-GARCH(1,1) model, neither the \textbf{standardized residuals} nor the \textbf{standardized squared residuals} shows significant serial correlation any more, according to the Ljung-Box Test. (see Appendix)
+        \subsubsection{Forecasting Performance}
+        \begin{equation}
+            \mathrm{RMSE}=2.4294,\quad R^2=0.199\%
+        \end{equation}
+        There is some improvement compared with MA(1) model, but still far from satisfactory.
+
+\section{Multivariate Model: VAR}
+    We have seen that univariate models all perform poorly at forecasting as the model contains too little information. We then consider using additional factors from other relative time series, by setting up a multivariate model, i.e. a conventional VAR model.
+
+    \subsection{VAR Model Fitting: VAR(2)}
+        Different information criteria proposed quite different orders (AIC suggests 10 while SC suggests 1). VAR model with a high order ($p>3$) will have a large number of parameters, rendering the model too complicated. We make a compromise by choosing $p=2$, the smallest order that can eliminate serial correlation in residual sequence. 
+        \begin{equation}
+            \bm{X} _t= \bm{c} + \bm {A}_1 \bm {X}_{t-1} +\bm {A}_2 \bm {X}_{t-2} +\bm \epsilon _t
+        \end{equation}
+        Here we set $\bm c=\bm 0$. Parameter estimates of $\hat {\bm A}$ are given in Appendix.
+
+        We also applied \textbf{model restriction}, namely we refitted the model by leaving out insignificant terms. Ljung-Box test shows that the serial correlation of the residuals is not significant.
+
+    \subsection{Granger Causality}
+        The result (see Appendix) shows what we expected: While \textbf{A} and \textbf{H} significantly granger-cause \textbf{AZ} and \textbf{HZ}, the reverse is not true. Individual Stock does not granger-cause Index price, which is in line with our common sense.
+
+    \subsection{Forecasting Performance}
+        \begin{equation}
+            \mathrm{RMSE}=2.406403,\quad R^2=2.080655\%
+        \end{equation}
+        We see a great improvement compared with univariate models.
+
+    \subsection{Variance Decomposition and Impulse Resoponse Function}
+    See results in Appendix.
+    %The variance of forecast of \textbf{AZ} mainly depends on \textbf{A} and \textbf{AZ}. 
+    \textbf{A} and \textbf{AZ} explained a remarkably large proportion of \textbf{AZ}'s future move. The variance of forecast of \textbf{HZ} depends mainly on itself, but also on \textbf{A}, \textbf{H} and \textbf{AZ}. The interpretation of the impluse response plot is somewhat similar to that of the granger causality.
+
+    \subsection{Cointegration Test}
+        We highly expect a cointegration relationship between 4 series, since the shapes and trends of the 4 series seem similar. Here we focus on log price instead of differenced log price. We check with ADF test that all 4 log price series are unit-root process. Then we conduct following tests to see if there is any cointegration variable. First, the Johansen procedure (both trace and eigenvalue test) gives $r=0$, suggests no cointegration variables. Second, the Phillips-Ouliaris test does not suggest significant sign of cointegration either.
+    % \subsection{Treat \textbf{A} and \textbf{H} as Exogeneous}
+    %     Since the granger test suggests \textbf{A} and \textbf{H} is the granger cause of \textbf{AZ} and \textbf{HZ}, we also fit a VAR(2) model with \textbf{A} and \textbf{H} as exogeneous variables. 
+        
+    %     Other procedures are much the same. We give its forecasting performance here:
+    %     \begin{equation}
+    %         \mathrm{RMSE}=2.388408,\quad R^2=3.539726\%
+    %     \end{equation}
+    %     A small improvement comparing with VAR(2) model with ($p=4$)
+
+\section{Conclusions}
+    % There is heterogeneous volatility in the stock price series (mainly caused by financial crisis).
+
+    % \textbf{A} and \textbf{H} significantly granger-cause \textbf{AZ} and \textbf{HZ}. \textbf{AZ} and \textbf{HZ} have little impact on \textbf{A} and \textbf{H}.
+
+    % VAR model gives better forecast comparing with univariate models, but the stock price is still far from predictable.
+    We tried several models to explore the relationships between A-share and H-share prices and returns of one cross-listed company. ARMA and ARMA-GARCH model perform poorly in forecasting while VAR model stands out. Generally speaking, in terms of log return, AZ and HZ affect each other reciprocally. AZ explained around 20\% of HZ’s future move while HZ seems to have very little influence on AZ. AZ itself together with A has dominated AZ’s upcoming performance.
+% \section{Conclusions}
+% This project aims to discover the relationship between the stock prices and returns of one company (MERCHANTS BANK) cross-listed both in Shanghai and Hong Kong. First we considered two univariate models, the ARMA model and the ARMA-GARCH model, which turned out to perform poorly at forecasting. Then we moved on to VAR model, and saw great improvement, especially in H-share price. Through granger causality test, impulse response and variance decomposition analysis, we concluded that A-share price had remarkable influence in explaining H-share price while a large part of A-share price was implied by SSI. Out of our expectation no significant cointegration relationship on the price level was found for this particular stock. In a nutshell, VAR performs better than univariate models as it makes use of more information available. Still, the stock price is highly stochastic and far from predictable.
+% \clearpage
+\appendix
+\begin{thebibliography}{}
+    \bibitem{Book} Code and outputs are given in Appendix.
+\end{thebibliography}
+
+
+
+\end{document}
